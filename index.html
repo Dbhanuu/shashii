@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shashiii....💞</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Playfair+Display:ital,wght@1,400;1,700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Modern Reset */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Floating Hearts Container */
+        .hearts-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .heart {
+            position: absolute;
+            bottom: -100px;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.5);
+            transform: rotate(45deg);
+            animation: floatUp 15s linear infinite;
+        }
+
+        .heart::before,
+        .heart::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+        }
+
+        .heart::before {
+            top: -10px;
+            left: 0;
+        }
+
+        .heart::after {
+            top: 0;
+            left: -10px;
+        }
+
+        /* Stars */
+        .stars-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            /* Behind everything */
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(0.8);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+
+        /* Keyframes for Floating Hearts (Adjusted opacity for dark bg) */
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(45deg) scale(0.8);
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
+
+            /* Slightly brighter */
+            100% {
+                transform: translateY(-120vh) rotate(45deg) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        /* Main Container */
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 90%;
+            width: 500px;
+            z-index: 10;
+            position: relative;
+            transition: all 0.5s ease;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: #d6336c;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .question {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .sub-text {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        /* Buttons Area */
+        .button-group {
+            position: static;
+            /* Allows absolute positioning relative to container */
+            height: 60px;
+            /* Specific height to contain initial buttons */
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            z-index: 20;
+        }
+
+        #yes-btn {
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            color: white;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #yes-btn:hover {
+            box-shadow: 0 6px 20px rgba(255, 65, 108, 0.4);
+        }
+
+        #no-btn {
+            background: #f0f0f0;
+            color: #333;
+            position: relative;
+            /* Default relative, changed via JS later */
+            transition: all 0.5s ease;
+            /* Smooth movement */
+        }
+
+        #no-btn:hover {
+            background: #e0e0e0;
+        }
+
+        /* When absolute, it positions relative to .container */
+        #no-btn.moving {
+            position: absolute;
+        }
+
+        /* Final Message styling */
+        .final-message-container {
+            display: none;
+            position: fixed;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            width: 100%;
+            z-index: 100;
+            animation: fadeIn 1s ease forwards;
+            pointer-events: none;
+        }
+
+        /* Enable pointer events for children */
+        .final-message-container * {
+            pointer-events: auto;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+        }
+
+        .final-message {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: #d6336c;
+            /* Removed background and box-shadow as requested */
+            padding: 20px 40px;
+        }
+
+        .final-sub {
+            font-size: 1.2rem;
+            color: #555;
+            margin-top: 10px;
+        }
+
+        /* Success Message styling */
+        .success-wrapper {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 200;
+            width: 100%;
+            max-height: 100vh;
+            overflow-y: auto;
+            /* Enable scrolling if text is too long */
+            padding: 20px;
+            /* Hide scrollbar for cleaner look */
+            scrollbar-width: none;
+            /* Firefox */
+            -ms-overflow-style: none;
+            /* IE/Edge */
+        }
+
+        .success-wrapper::-webkit-scrollbar {
+            display: none;
+            /* Chrome/Safari */
+        }
+
+        .success-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: #ff416c;
+            animation: popIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Fireworks */
+        .firework {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            box-shadow: 0 0 #fff;
+            animation: firework 2s ease-out infinite;
+            left: 50%;
+            top: 50%;
+            pointer-events: none;
+            display: none;
+            /* Hidden by default */
+        }
+
+        @keyframes firework {
+            0% {
+                transform: translate(0, 0);
+                width: 5px;
+                opacity: 1;
+                box-shadow: 0 0 0 #fff;
+            }
+
+            50% {
+                width: 10px;
+                opacity: 1;
+            }
+
+            100% {
+                width: 0;
+                opacity: 0;
+                box-shadow:
+                    -120px -180px 0 #ff416c,
+                    120px -180px 0 #00f,
+                    -120px 180px 0 #0f0,
+                    120px 180px 0 #ff0,
+                    -180px -80px 0 #f0f,
+                    180px -80px 0 #0ff,
+                    -180px 80px 0 #fff,
+                    180px 80px 0 #ff4b2b,
+                    0 -200px 0 #ff416c,
+                    0 200px 0 #ff4b2b,
+                    -200px 0 0 #fff,
+                    200px 0 0 #fff;
+            }
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px 15px;
+                width: 90%;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+                margin-bottom: 15px;
+            }
+
+            .question {
+                font-size: 1.2rem;
+            }
+
+            .sub-text {
+                font-size: 0.9rem;
+            }
+
+            button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+
+            /* Adjust Love Letter for mobile */
+            .love-title {
+                font-size: 1.8rem;
+            }
+
+            .love-letter {
+                font-size: 0.9rem;
+                /* Smaller text for reading on phone */
+                padding: 0 10px;
+                line-height: 1.6;
+            }
+
+            /* Adjust Final Message for mobile */
+            .final-message-container {
+                top: 10%;
+                /* Move slightly up */
+            }
+
+            .final-message {
+                font-size: 1.5rem;
+                padding: 10px;
+            }
+
+            .final-image {
+                width: 200px !important;
+                /* Force smaller image */
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Floating Hearts -->
+    <div class="hearts-container">
+        <!-- Hearts generated by JS or static -->
+        <div class="heart" style="left: 10%; animation-duration: 12s;"></div>
+        <div class="heart" style="left: 30%; animation-duration: 15s; animation-delay: 2s;"></div>
+        <div class="heart" style="left: 70%; animation-duration: 10s; animation-delay: 5s;"></div>
+        <div class="heart" style="left: 90%; animation-duration: 18s; animation-delay: 1s;"></div>
+    </div>
+
+    <!-- Stars Container -->
+    <div class="stars-container" id="stars-container"></div>
+
+    <!-- Main Content -->
+    <div class="container" id="main-container">
+        <div id="content-wrapper">
+            <h1>Shashiii....💞</h1>
+            <div class="question">Will you be mine one day? 🌹</div>
+            <div class="sub-text">I’ve been thinking about this for a while, and you’re always on my mind.</div>
+
+            <div class="button-group">
+                <button id="yes-btn">YES 💖</button>
+                <button id="no-btn">NO 😓</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="success-wrapper" id="success-wrapper">
+        <!-- Replaced "I knew it" with Cinematic Love Letter -->
+        <h1 class="love-title">We will be better together</h1>
+        <div class="love-letter">
+            <p>This is for you.. Shashii Madam...❤️🔥</p>
+            <p>I got attached to you so easily, and I don’t even know when it happened. I care about you more than I
+                ever planned to. You stay on my mind all day, in quiet moments and loud ones too. I notice the little
+                things, and they matter to me.</p>
+            <p>I don’t have perfect words for how you make me feel, but you’re the first thought when I wake up and the
+                last one before I sleep. Somehow, you made your way into my heart without even trying.</p>
+            <p>You make ordinary days feel lighter, and even the hard ones feel easier just knowing you’re there. I
+                smile more because of you, and I feel calmer just thinking about you.</p>
+            <p>I just love you so much, more than I can explain, more than I ever expected… and more every day.</p>
+        </div>
+    </div>
+
+    <style>
+        /* Love Letter Styling */
+        .love-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: #d6336c;
+            opacity: 0;
+            animation: fadeInTitle 2s ease forwards 0.5s;
+            margin-bottom: 2rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .love-letter {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.1rem;
+            color: #fff;
+            line-height: 1.8;
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: scrollUp 3s ease forwards 1.5s;
+            /* Delays to let title appear first */
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .love-letter p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Ensure bottom text is readable on mobile */
+        .love-letter p:last-child {
+            margin-bottom: 100px;
+        }
+
+        @keyframes fadeInTitle {
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes scrollUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+
+    <!-- Final Message (Outside container to be positioned at top of page) -->
+    <div class="final-message-container" id="final-message-container">
+        <div class="final-message">
+            Stop messing with me shashii.. 😾
+            <img src="cat-gun.png" alt="Cat with gun" class="final-image"
+                style="max-width: 100%; width: 300px; display: block; margin: 20px auto; border-radius: 15px;">
+            <div id="final-yes-container" style="margin-top: 20px; display: flex; justify-content: center;"></div>
+        </div>
+    </div>
+
+    <!-- Fireworks Elements (Multiple to create effect) -->
+    <div class="firework" style="left: 20%; top: 30%; animation-delay: 0s;"></div>
+    <div class="firework" style="left: 80%; top: 30%; animation-delay: 0.5s;"></div>
+    <div class="firework" style="left: 50%; top: 20%; animation-delay: 1s;"></div>
+    <div class="firework" style="left: 30%; top: 70%; animation-delay: 1.5s;"></div>
+    <div class="firework" style="left: 70%; top: 70%; animation-delay: 2s;"></div>
+
+    <script>
+        const yesBtn = document.getElementById('yes-btn');
+        const noBtn = document.getElementById('no-btn');
+        const container = document.getElementById('main-container');
+        const contentWrapper = document.getElementById('content-wrapper');
+        const successWrapper = document.getElementById('success-wrapper');
+        const finalMessageContainer = document.getElementById('final-message-container');
+        const fireworks = document.querySelectorAll('.firework');
+
+        // --- Star Generation ---
+        const starsContainer = document.getElementById('stars-container');
+        const starCount = 100; // Number of stars
+
+        for (let i = 0; i < starCount; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+
+            // Random position
+            const x = Math.random() * 100;
+            const y = Math.random() * 100;
+
+            // Random animation delay and duration for natural twinkling
+            const delay = Math.random() * 2;
+            const duration = 1 + Math.random() * 2;
+
+            star.style.left = `${x}%`;
+            star.style.top = `${y}%`;
+            star.style.width = `${Math.random() * 3}px`;
+            star.style.height = star.style.width; // Keep it round
+            star.style.animationDelay = `${delay}s`;
+            star.style.animationDuration = `${duration}s`;
+
+            starsContainer.appendChild(star);
+        }
+
+        let noClickCount = 0;
+        let yesScale = 1;
+
+        function celebrate() {
+            // Hide main content wrapper
+            contentWrapper.style.display = 'none';
+            // Hide main container (white box) if visible
+            container.style.display = 'none';
+            // Hide final message (cat/text) if it's open
+            finalMessageContainer.style.display = 'none';
+
+            // Show Love Letter container
+            successWrapper.style.display = 'block';
+
+            // Start fireworks with cinematic duration
+            fireworks.forEach(fw => {
+                fw.style.display = 'block';
+                // Randomize position more widely
+                fw.style.left = Math.random() * 100 + '%';
+                fw.style.top = Math.random() * 100 + '%';
+                // Vary colors by adding random classes or reusing existing CSS animation
+            });
+
+            // Keep fireworks going for the duration of the reading (e.g. 20s)
+            setTimeout(() => {
+                fireworks.forEach(fw => fw.style.display = 'none');
+            }, 20000);
+        }
+
+        yesBtn.addEventListener('click', celebrate);
+
+        noBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            noClickCount++;
+
+            // --- YES Button Growth ---
+            yesScale += 0.3; // Increase scale more noticeably
+            yesBtn.style.transform = `scale(${yesScale})`;
+
+            // --- NO Button Sequence ---
+            // On first click, switch to absolute positioning
+            if (noClickCount === 1) {
+                noBtn.classList.add('moving');
+            }
+
+            // Click Sequence Logic
+            switch (noClickCount) {
+                case 1: // Right side, Center vertically
+                    noBtn.style.right = '20px';
+                    noBtn.style.top = '50%';
+                    noBtn.style.transform = 'translateY(-50%)';
+                    noBtn.style.left = 'auto';
+                    noBtn.style.bottom = 'auto';
+                    break;
+                case 2: // Right side, Upper area
+                    noBtn.style.right = '20px';
+                    noBtn.style.top = '20%';
+                    noBtn.style.transform = 'none';
+                    break;
+                case 3: // Right side, Lower area
+                    noBtn.style.right = '20px';
+                    noBtn.style.top = '80%';
+                    noBtn.style.transform = 'translateY(-100%)';
+                    break;
+                case 4: // Above container, centered
+                    noBtn.style.top = '-80px';
+                    noBtn.style.left = '50%';
+                    noBtn.style.transform = 'translateX(-50%)';
+                    noBtn.style.right = 'auto';
+                    break;
+                case 5: // Left side, Upper
+                    noBtn.style.left = '20px';
+                    noBtn.style.top = '20%';
+                    noBtn.style.transform = 'none';
+                    noBtn.style.right = 'auto';
+                    break;
+                case 6: // Left side, Center
+                    noBtn.style.left = '20px';
+                    noBtn.style.top = '50%';
+                    noBtn.style.transform = 'translateY(-50%)';
+                    break;
+                case 7: // Left side, Lower
+                    noBtn.style.left = '20px';
+                    noBtn.style.top = '80%';
+                    noBtn.style.transform = 'translateY(-100%)';
+                    break;
+                case 8: // FINAL: "Bye", fade out, move off-screen
+                    noBtn.innerText = "Bye 👋";
+                    noBtn.style.transition = "all 0.5s ease"; // Fast fade
+
+                    // Move completely off-screen
+                    noBtn.style.transform = 'translateY(200vh)';
+                    noBtn.style.opacity = '0';
+
+                    // After transition, show final message
+                    setTimeout(() => {
+                        noBtn.style.display = 'none';
+                        // Hide the main container completely to remove the white background
+                        container.style.display = 'none';
+
+                        // Show the final message container
+                        finalMessageContainer.style.display = 'block';
+
+                        // Move the YES button to the final container
+                        // This preserves its current size/transform
+                        document.getElementById('final-yes-container').appendChild(yesBtn);
+
+                    }, 500);
+                    break;
+            }
+        });
+    </script>
+</body>
+
+</html>
